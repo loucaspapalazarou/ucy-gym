@@ -34,8 +34,8 @@ logging.basicConfig(
 )
 
 
-def handle_exception(func: Callable[..., Any]) -> Callable[..., Any]:
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
+def handle_exception(func):
+    def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except Exception as e:

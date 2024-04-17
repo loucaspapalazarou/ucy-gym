@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import logging
+from typing import Any, Callable
 from datetime import datetime, timedelta
 
 import schedule
@@ -33,8 +34,8 @@ logging.basicConfig(
 )
 
 
-def handle_exception(func):
-    def wrapper(*args, **kwargs):
+def handle_exception(func: Callable[..., Any]) -> Callable[..., Any]:
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
             return func(*args, **kwargs)
         except Exception as e:

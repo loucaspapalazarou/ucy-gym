@@ -114,11 +114,16 @@ if __name__ == "__main__":
             schedule.run_pending()
             time.sleep(50)
     else:
-        logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+        formatter = logging.Formatter(
+            "%(asctime)s - %(levelname)s - %(message)s", datefmt="%d-%m-%Y %H:%M:%S"
+        )
+        stream_handler = logging.StreamHandler(sys.stdout)
+        stream_handler.setFormatter(formatter)
+        logging.getLogger().addHandler(stream_handler)
         make_reservation(
             username,
             password,
             date=datetime.today().strftime("%d-%m-%Y"),
             reservation_timetable=RESERVATION_TIMETABLE,
-            headless=False,
+            headless=True,
         )

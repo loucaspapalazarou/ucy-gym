@@ -9,14 +9,14 @@ import schedule
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 
-# Monday - Saturday
+# Monday(0) - Saturday(5)
 RESERVATION_TIMETABLE = {
     0: "18:30",
     1: "18:30",
     2: "18:30",
     3: "18:30",
     4: "18:30",
-    5: "10:30",
+    # 5: "10:30",
 }
 
 # login url for alumni
@@ -68,7 +68,8 @@ def make_reservation(
     else:
         day = datetime.strptime(date, "%d-%m-%Y").weekday()
 
-    if day == 6:
+    if day not in reservation_timetable or day == 6:
+        logging.info("No reservation time set for that day")
         return
     res_time: str = reservation_timetable[day]
 

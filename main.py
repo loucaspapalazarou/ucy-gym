@@ -33,6 +33,16 @@ logging.basicConfig(
 )
 
 
+def handle_exception(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            logging.error(f"An error occurred in {func.__name__}: {e}")
+
+    return wrapper
+
+
 def date_to_reserve() -> tuple[str, int]:
     date: datetime = datetime.today() + timedelta(days=5)
     return date.strftime("%d-%m-%Y"), date.weekday()
@@ -43,6 +53,7 @@ def get_env_credentials() -> tuple[str, str]:
     return os.getenv("GYM_USERNAME", ""), os.getenv("GYM_PASSWORD", "")
 
 
+@handle_exception
 def make_reservation(
     username: str,
     password: str,

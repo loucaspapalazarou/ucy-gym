@@ -97,7 +97,7 @@ def make_reservation(
 
         # get result
         result = page.inner_html("li.prntcontent, p.prntcontent")
-        logging.info(f"Response - {result}")
+        logging.info(f"Response: {result}")
 
         # done
         browser.close()
@@ -114,6 +114,7 @@ if __name__ == "__main__":
             schedule.run_pending()
             time.sleep(50)
     else:
+        # if running directly, also log on stdout
         formatter = logging.Formatter(
             "%(asctime)s - %(levelname)s - %(message)s", datefmt="%d-%m-%Y %H:%M:%S"
         )

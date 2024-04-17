@@ -8,13 +8,14 @@ import schedule
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 
+# Monday - Saturday
 RESERVATION_TIMETABLE = {
     0: "18:30",
     1: "18:30",
     2: "18:30",
     3: "18:30",
     4: "18:30",
-    5: "18:30",
+    5: "10:30",
 }
 
 
@@ -44,10 +45,10 @@ def make_reservation(
     reservation_timetable: dict[int, str],
     headless: bool = True,
 ) -> None:
+
     date, day = date_to_reserve()
     if day == 6:
         return
-
     res_time: str = reservation_timetable[day]
 
     logging.info(f"Starting run for {username} | {date} | {res_time}")
@@ -55,6 +56,7 @@ def make_reservation(
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=headless)
         page = browser.new_page()
+
         # login
         page.goto(
             "https://applications2.ucy.ac.cy/pub_sportscenter/sportscenter.main_alumni?p_lang="
@@ -63,6 +65,7 @@ def make_reservation(
         page.fill('input[name="p_password"]', password)
         page.click('button[type="submit"]')
         logging.info("Logged in")
+
         # go to res
         page.goto(
             "https://applications2.ucy.ac.cy/pub_sportscenter/online_reservations_pck2.insert_reservation?p_lang="
@@ -71,9 +74,11 @@ def make_reservation(
         page.select_option('select[name="p_sport"]', value="6")
         page.click('button[type="submit"]')
         logging.info("Making reservation")
+
         # calendar
         page.click('button[type="submit"]')
         logging.info("Done with calendar")
+
         # set options
         page.select_option('select[name="p_sttime"]', value=res_time)
         page.fill('textarea[name="p_skopos"]', "gym")
@@ -85,9 +90,12 @@ def make_reservation(
         page.click('button[type="submit"]')
         page.click('button[type="submit"]')
         logging.info("Subitted reservation")
+
         # get result
         result = page.inner_html("li.prntcontent, p.prntcontent")
         logging.info(f"Result: {result}")
+
+        # done
         browser.close()
 
 

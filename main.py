@@ -47,10 +47,15 @@ def make_reservation(
     username: str,
     password: str,
     reservation_timetable: dict[int, str],
+    date: str = None,
     headless: bool = True,
 ) -> None:
 
-    date, day = date_to_reserve()
+    if date is None:
+        date, day = date_to_reserve()
+    else:
+        day = datetime.strptime(date, "%d-%m-%Y").weekday()
+
     if day == 6:
         return
     res_time: str = reservation_timetable[day]
@@ -92,7 +97,7 @@ def make_reservation(
 
         # get result
         result = page.inner_html("li.prntcontent, p.prntcontent")
-        logging.info(f"Result: {result}")
+        logging.info(f"Response - {result}")
 
         # done
         browser.close()
@@ -110,4 +115,10 @@ if __name__ == "__main__":
             time.sleep(50)
     else:
         logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
-        make_reservation(username, password, RESERVATION_TIMETABLE, headless=False)
+        make_reservation(
+            username,
+            password,
+            date=datetime.today().strftime("%d-%m-%Y"),
+            reservation_timetable=RESERVATION_TIMETABLE,
+            headless=False,
+        )

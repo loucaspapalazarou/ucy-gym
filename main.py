@@ -101,7 +101,7 @@ def make_reservation(
 
 if __name__ == "__main__":
     username, password = get_credentials()
-    if len(sys.argv) > 1 and sys.argv[1] == "s":
+    if len(sys.argv) > 1 and (sys.argv[1] == "-s" or sys.argv[1] == "--schedule"):
         schedule.every().day.at("00:10").do(
             make_reservation, username, password, RESERVATION_TIMETABLE
         )

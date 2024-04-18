@@ -11,7 +11,7 @@ from playwright.sync_api import sync_playwright
 
 # Monday(0) - Saturday(5)
 RESERVATION_TIMETABLE = {
-    0: "18:30",
+    0: ("18:30", "20:00"),
     1: "18:30",
     2: "18:30",
     3: "18:30",
@@ -137,7 +137,7 @@ if __name__ == "__main__":
         make_reservation(
             username,
             password,
-            date=datetime.today().strftime("%d-%m-%Y"),
+            # date=datetime.today().strftime("%d-%m-%Y"),
             reservation_timetable=RESERVATION_TIMETABLE,
             headless=True,
         )

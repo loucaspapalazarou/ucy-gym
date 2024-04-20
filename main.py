@@ -3,11 +3,19 @@ import sys
 import time
 import logging
 import requests
+from enum import Enum, auto
+
 import schedule
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 
+class UserType(Enum):
+    student = auto()
+    alumni = auto()
+
+
+# Monday(0) - Saturday(5)
 RESERVATION_TIMETABLE = {
     0: ("18:30", "20:00"),
     1: ("18:30", "20:00"),
@@ -41,7 +49,7 @@ def make_reservation(
     password: str,
     reservation_timetable: dict[int, (str, str)],
     res_date=None,
-    alumni=True,
+    user_type=UserType.alumni,
 ) -> int:
     headers = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -66,7 +74,7 @@ def make_reservation(
     auth_url = "https://applications2.ucy.ac.cy/pub_sportscenter/sportscenter.alumnis_pck.usr_authenticate"
     res_url = "https://applications2.ucy.ac.cy/pub_sportscenter/SPORTSCENTER.online_reservations_gym_pck2.insert_reservation3"
 
-    if not alumni:
+    if user_type != UserType.alumni:
         raise NotImplementedError("Non-alumni not supported yet.")
 
     # login to get cookies
@@ -86,7 +94,7 @@ def make_reservation(
 
     if day not in reservation_timetable or day == 6:
         logging.warning("No reservation time set for that day")
-        return
+        return -1
 
     res_time_start: str = reservation_timetable[day][0]
     res_time_end: str = reservation_timetable[day][1]

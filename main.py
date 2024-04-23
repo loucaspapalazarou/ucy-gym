@@ -6,6 +6,7 @@ import requests
 from enum import Enum, auto
 
 import schedule
+from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
@@ -93,14 +94,14 @@ def make_reservation(
         day = datetime.strptime(res_date, "%d-%m-%Y").weekday()
 
     if day not in reservation_timetable or day == 6:
-        logging.warning("No reservation time set for that day")
+        logging.warning(f"No reservation time set for that day ({res_date})")
         return -1
 
     res_time_start: str = reservation_timetable[day][0]
     res_time_end: str = reservation_timetable[day][1]
 
     logging.info(
-        f"Executing run for {username}. Target date: {res_date}, target time: {res_time_start}-{res_time_end}"
+        f"Executing run for {username}. Target date: {res_date}, weekday: {day}, target time: {res_time_start}-{res_time_end}"
     )
 
     data = (
@@ -152,8 +153,13 @@ def make_reservation(
         data=data,
     )
 
+    soup = BeautifulSoup(response.text, "html.parser")
+    reservation_outcome = soup.find("li", class_="prntcontent").text
+
     logging.info(f"Response code: {response.status_code}")
-    return response.status_code
+    logging.info(f"Reservation outcome: {reservation_outcome}")
+
+    return response.status_code, reservation_outcome
 
 
 if __name__ == "__main__":
@@ -177,6 +183,6 @@ if __name__ == "__main__":
         make_reservation(
             username,
             password,
-            # date=datetime.today().strftime("%d-%m-%Y"),
+            # res_date=datetime.today().strftime("%d-%m-%Y"),
             reservation_timetable=RESERVATION_TIMETABLE,
         )

@@ -172,7 +172,7 @@ if __name__ == "__main__":
         while True:
             schedule.run_pending()
             time.sleep(50)
-    else:
+    elif len(sys.argv) == 1:
         # if running directly, also log on stdout
         formatter = logging.Formatter(
             "%(asctime)s - %(levelname)s - %(message)s", datefmt="%d-%m-%Y %H:%M:%S"
@@ -186,3 +186,5 @@ if __name__ == "__main__":
             # res_date=datetime.today().strftime("%d-%m-%Y"),
             reservation_timetable=RESERVATION_TIMETABLE,
         )
+    else:
+        raise ValueError(f"Unsupported arguments {sys.argv[1:]}")

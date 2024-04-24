@@ -154,7 +154,7 @@ def make_reservation(
     )
 
     soup = BeautifulSoup(response.text, "html.parser")
-    reservation_outcome = soup.find("li", class_="prntcontent").text
+    reservation_outcome = soup.find(["li", "p"], class_="prntcontent").text
 
     logging.info(f"Response code: {response.status_code}")
     logging.info(f"Reservation outcome: {reservation_outcome}")
